@@ -47,10 +47,10 @@ CConfig::CConfig( HRESULT *hr, const CHAR* fn )
 	strcpy( m_fn, fn );
 
 	//
-	this->reload();
+	*hr = this->reload();
 #ifdef _DEBUG
 	// reload test
-	this->reload();
+	*hr = this->reload();
 #endif
 	return;	
 }
@@ -140,8 +140,10 @@ CConfig::reload()
 	// -- cleanup
 	this->clearHosts();
 
+	// collect section names
 	CHAR sns[ 0x10000 ];
 	DWORD snsl = GetPrivateProfileSectionNames( sns, sizeof(sns), m_fn );
+	// walk & parse
 	for( size_t p = 0; p < snsl ; p += strlen( sns + p ) + 1 )
 	{
 		if( strncmp( sns + p, CONFIG_HOSTPREFIX, strlen(CONFIG_HOSTPREFIX) ) != 0 )
